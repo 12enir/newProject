@@ -1,24 +1,32 @@
 <section *ngIf="!isEditMode">
+  <app-user-editor></app-user-editor>
   <h1>
     {{title}} Information
   </h1>
 
   <ul>
-    <li>Name : {{user.name}}</li>
-    <li>Age : {{user.age}}</li>
-    <li>Weight : {{user.weight}}</li>
-    <li>Height : {{user.height}}</li>
-    <span *ngIf="user.isHealthy()">User is healthy</span>
+    <li *ngFor="let user of users | filterPipe; let i=index" (click)="selectedUser=user">Name : {{user.name}} | Age : {{user.age | myPipe}} | <button (click) = "deleteUserByIndex(i)">x</button></li>
+
+    <li>Selected user name: {{selectedUser.name}}</li>
+    <li>Age : {{selectedUser.age | myPipe}}</li>
+    <li>Weight : {{selectedUser.weight}}</li>
+    <li>Height : {{selectedUser.height}}</li>
+    <span *ngIf="selectedUser.isHealthy()">User is healthy</span>
   </ul>
-  <button (click)="user.printUserBMI()">CHECK BMI</button>
-  <button (click)="isEditMode=true">EDIT Mode </button>
+
+  <p>Age sum: {{users | sumPipe | myPipe}}</p>
+  <button class="btn btn primary" (click)="selectedUser.printUserBMI()">CHECK BMI</button>
+  <button class="btn btn primary" (click)="isEditMode=true">EDIT Mode </button>
+  <button (click)="deleteUser(selectedUser)">delete selected user</button>
+  <button (click)="addUser()">add user</button>
+
 </section>
 
 <section *ngIf="isEditMode">
-  <pre>{{user | json}}</pre>
+  <pre>{{users | filterPipe | json}}</pre>
   <h2>Editor</h2>
-  <input type="text" [(ngModel)]="user.name" />
-  <input type="text" [(ngModel)]="user.age" />
+  <input type="text" [(ngModel)]="selectedUser.name" />
+  <input type="text" [(ngModel)]="selectedUser.age" />
   <button (click)="onCheckAge()">check age</button>
   <button (click)="isEditMode=false">VIEW Mode</button>
 </section>
